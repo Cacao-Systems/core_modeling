@@ -1,0 +1,9 @@
+{
+    "editor.renderWhitespace": "all",
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.ipynb_checkpoints": true
+    },
+    "notebook.output.textLineLimit":500,
+    "editor.rulers": [80],
+}
