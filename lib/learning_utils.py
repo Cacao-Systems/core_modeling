@@ -9,7 +9,6 @@ def set_seed (seed):
     torch.cuda.manual_seed_all(seed)
 
 class AverageMeter(object):
-    """Computes and stores the average and current value"""
     def __init__(self, name, fmt=':f'):
         self.name = name
         self.fmt = fmt
@@ -54,7 +53,6 @@ def write_progress_updates_to_files(file_name, entry):
         f.write(f"""{entry} \n""")
 
 def print_cuda_mem_stats(gpu_id):
-    """Report Progress for certain GPU_id"""
     total_memory = torch.cuda.get_device_properties(gpu_id).total_memory/(1024**3)
     allocated_mem = torch.cuda.memory_allocated(gpu_id)/(1024**3)
     allocated_cache = torch.cuda.memory_reserved(gpu_id)/(1024**3)
@@ -76,7 +74,6 @@ def print_grad_stats(model):
         print(f'{p}:  mean: {mean:.3e} - max: {max_grad:.3e}')
 
 class to_device():
-    """A transformation that moves a tensor to a particular device. It is particularly useful for getting used for nn_optimize modules """
     def __init__(self, device):
         self.device = device
     def __call__(self, data):
@@ -94,17 +91,12 @@ class to_device():
         else:
             raise Exception("The data can't be moved to the device")
 
-def collate_train_samples(batch):
-    """ =
-    Used as collate_fn for pytorch dataloaders to maintain data_ident (doc_sample or pkg_train_sample) as the third item in the tuple 
-    Args:
-        batch: list of tuples  (x, y, sample)
-    """ 
+def collate_modeling_samples(batch):
     batch_x_lst, batch_y_lst, batch_ident_lst = [], [], []
     for i in range(len(batch)):
-        batch_x_lst.append(batch[i][0])
-        batch_y_lst.append(batch[i][1])
-        batch_ident_lst.append(batch[i][2])
-    batch_x = torch.cat(batch_x_lst, dim=0)
+        batch_x_lst.append(batch[i].x)
+        batch_y_lst.append(batch[i].y)
+        batch_ident_lst.append(batch[i].sample)
+    batch_x = torch.cat(batch_x_lst, dim = 0)
     batch_y = torch.tensor(batch_y_lst)
     return (batch_x, batch_y, batch_ident_lst)
