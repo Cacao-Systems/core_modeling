@@ -10,4 +10,4 @@ def md_classification_accuracy (y_hat, y, ignore_index = None):
             y = y[ignore_index_fltr]
             y_hat_top_1 = y_hat_top_1[ignore_index_fltr]
         correct = torch.eq(y,y_hat_top_1).float().sum()
-        return correct/torch.numel(y)
+        return correct/torch.numel(y), torch.numel(y)
