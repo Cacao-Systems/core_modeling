@@ -1,4 +1,3 @@
-import logging
 import time
 from .learning_utils import AverageMeter, ProgressMeter
 import torch
@@ -231,7 +230,7 @@ def train_epoch(max_no_epochs,
         snap_shot = torch.load(snap_shot_location, map_location = "cuda:0")
         model.load_state_dict(snap_shot['model'])
         train_epoch.best_attained_metric = snap_shot['best_attained_metric']
-        logging.info(f"Restoring snapshot that attained results over validation data {train_epoch.best_attained_metric}")
+        print_fn(f"Restoring snapshot that attained results over validation data {train_epoch.best_attained_metric}")
         train_epoch.already_resumed = True
         train_epoch.current_epoch = 0
         validate(
@@ -262,7 +261,7 @@ def train_epoch(max_no_epochs,
                 batch_y_transformations = batch_y_transformations,
                 meters = valid_meters)
         if train_epoch.best_attained_metric < valid_avg_metric:
-            logging.info(f"Saving snapshot after attaining results over validation data {valid_avg_metric}")
+            print_fn(f"Saving snapshot after attaining results over validation data {valid_avg_metric}")
             train_epoch.best_attained_metric = valid_avg_metric
             state = {
                 'model': model.state_dict(),
