@@ -113,29 +113,17 @@ def train (train_loader,
         epoch_lr_scheduler.step()
     return accuracies.avg, losses.avg
 def infer(test_loader, model,
-        batch_x_transformations = None,
-        batch_y_transformations = None,
-        meters = None):
-    if meters is not None:
-        for meter in meters:
-            meter.reset()
-    res = []
+        batch_x_transformations = None):
+    res, res_ident = [], []
     model.eval()
     with torch.no_grad():
-        for batch_x, batch_y, batch_ident in test_loader:
+        for batch_x, batch_ident in test_loader:
             if batch_x_transformations is not None:
                 batch_x = batch_x_transformations(batch_x)
-            if batch_y_transformations is not None:
-                batch_y = batch_y_transformations(batch_y)
             y_hat = model(batch_x)
             res.append(y_hat)
-            if meters is not None:
-                for meter in meters:
-                    meter(y_hat, batch_y, batch_ident)
-        if meters is not None:
-            for meter in meters:
-                meter.display()
-        return res
+            res_ident.extend(batch_ident)
+        return torch.concat(res, dim = 0), res_ident
 def find_lr(train_loader,
             model,
             criterion,
