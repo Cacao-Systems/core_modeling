@@ -220,7 +220,8 @@ def train_epoch(max_no_epochs,
                 resume = False,
                 print_fn = print,
                 valid_meters = None,
-                train_meters = None):
+                train_meters = None,
+                snapshot_presave_hook = None):
     if "current_epoch" not in train_epoch.__dict__:
         train_epoch.current_epoch = 0
         train_epoch.best_attained_metric = -1
@@ -264,6 +265,8 @@ def train_epoch(max_no_epochs,
             state = {
                 'model': model.state_dict(),
                 'best_attained_metric': train_epoch.best_attained_metric}
+            if snapshot_presave_hook is not None:
+                state = snapshot_presave_hook(state)
             torch.save(state, snap_shot_location)
         train_epoch.current_epoch += 1
         return train_avg_metric, train_avg_criterion, valid_avg_metric, valid_avg_criterion, optimizer.param_groups[0]['lr']
