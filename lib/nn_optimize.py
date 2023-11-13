@@ -136,8 +136,6 @@ def infer(test_loader, model,
             for meter in meters:
                 meter.display()
         return res
-def save_checkpoint(state, filename='checkpoint.pth.tar'):
-    torch.save(state, filename)
 def find_lr(train_loader,
             model,
             criterion,
