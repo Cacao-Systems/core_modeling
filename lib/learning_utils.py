@@ -100,3 +100,11 @@ def collate_modeling_samples(batch):
     batch_x = torch.cat(batch_x_lst, dim = 0)
     batch_y = torch.tensor(batch_y_lst)
     return (batch_x, batch_y, batch_ident_lst)
+
+def collate_infer_samples(batch):
+    batch_x_lst, batch_ident_lst = [], []
+    for i in range(len(batch)):
+        batch_x_lst.append(batch[i].x)
+        batch_ident_lst.append(batch[i].sample)
+    batch_x = torch.cat(batch_x_lst, dim = 0)
+    return (batch_x, batch_ident_lst)
