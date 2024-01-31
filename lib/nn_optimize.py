@@ -214,7 +214,7 @@ def train_epoch(max_no_epochs,
         train_epoch.current_epoch = 0
         train_epoch.best_attained_metric = -1
     if resume and "already_resumed" not in train_epoch.__dict__:
-        snap_shot = torch.load(snap_shot_location, map_location = "cuda:0")
+        snap_shot = torch.load(snap_shot_location)
         model.load_state_dict(snap_shot['model'])
         train_epoch.best_attained_metric = snap_shot['best_attained_metric']
         print_fn(f"Restoring snapshot that attained results over validation data {train_epoch.best_attained_metric}")
