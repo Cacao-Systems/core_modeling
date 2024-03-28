@@ -8,7 +8,7 @@ class meta_sample:
     def __init__(self, identity):
         self.identity = identity
     def __hash__(self):
-        return self.identity
+        return hash(self.identity)
 
 class meta_ds(abstract_class):
     @abstract_method
