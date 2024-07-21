@@ -24,7 +24,7 @@ import torch
 from torch import nn
 import torchvision.models
 
-def linear_block(in_features, out_features, activation='relu', *args, **kwargs):
+def linear_block(in_features, out_features, activation='relu', drop_p = 0):
     if activation != 'None':
         activations = nn.ModuleDict([
         ['lrelu', nn.LeakyReLU()],
@@ -33,8 +33,10 @@ def linear_block(in_features, out_features, activation='relu', *args, **kwargs):
         ['tanh', nn.Tanh()]
         ])
         return nn.Sequential (OrderedDict([
+        ('drop_out', nn.Dropout(p=drop_p)),
         ('fc', nn.Linear(in_features, out_features)),
-        ('activation' ,activations[activation])]))
+        ('activation' ,activations[activation]),
+        ]))
     else:
         return nn.Sequential(OrderedDict([('fc',nn.Linear(in_features, out_features))]))
 
@@ -128,12 +130,12 @@ class pre_trained_Transformer_subword_embedder_block(nn.Module):
 
 class fc_classifier(nn.Module):
     """Classifier with configurable fully connected layers"""
-    def __init__(self, input_dim, linear_block_sizes, output_dim, linear_block_activations):
+    def __init__(self, input_dim, linear_block_sizes, output_dim, linear_block_activations, drop_ps):
         super().__init__()
         linear_block_sizes = [input_dim, *linear_block_sizes, output_dim]
-        lst = [(f'linear_block{i}', linear_block(in_f, out_f, activation)) for i, (in_f, out_f, activation) in 
-              enumerate(zip(linear_block_sizes,linear_block_sizes[1:], linear_block_activations))]
-        self.linear_blocks = nn.Sequential(OrderedDict(lst))        
+        lst = [(f'linear_block{i}', linear_block(in_f, out_f, activation, drop_p)) for i, (in_f, out_f, activation, drop_p) in 
+              enumerate(zip(linear_block_sizes,linear_block_sizes[1:], linear_block_activations, drop_ps))]
+        self.linear_blocks = nn.Sequential(OrderedDict(lst))
     def forward(self, x):
         return self.linear_blocks(x)
 
